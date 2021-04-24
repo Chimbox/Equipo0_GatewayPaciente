@@ -23,6 +23,8 @@ import javax.ws.rs.core.MediaType;
 public class PacienteResource {
 
     private AuthPacienteClient authPaciente;
+    private CitasClient citas;
+    private ExpedienteClient expedientes;
     
     @Context
     private UriInfo context;
@@ -32,6 +34,8 @@ public class PacienteResource {
      */
     public PacienteResource() {
         authPaciente=new AuthPacienteClient();
+        citas=new CitasClient();
+        expedientes=new ExpedienteClient();
     }
 
     /**
@@ -39,13 +43,29 @@ public class PacienteResource {
      * @return an instance of java.lang.String
      */
     @GET
+    @Path("/auth")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getJson() {
-        String json="{"
-                + "\"mensaje\":\"hola mundo\""
-                + "}";
+    public String getJsonAuth() {
+        
         return authPaciente.getJson();
     }
+    
+    @GET
+    @Path("/citas")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getJsonCitas() {
+        
+        return citas.getJson();
+    }
+    
+    @GET
+    @Path("/expedientes")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getJsonExpedientes() {
+        
+        return expedientes.getJson();
+    }
+    
 
     /**
      * PUT method for updating or creating an instance of PacienteResource

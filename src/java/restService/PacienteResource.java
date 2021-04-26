@@ -10,6 +10,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
@@ -19,7 +20,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author Alfonso Felix
  */
-@Path("Paciente")
+@Path("paciente")
 public class PacienteResource {
 
     private AuthPacienteClient authPaciente;
@@ -38,41 +39,27 @@ public class PacienteResource {
         expedientes=new ExpedienteClient();
     }
 
-    /**
-     * Retrieves representation of an instance of restService.PacienteResource
-     * @return an instance of java.lang.String
-     */
-    @GET
-    @Path("/auth")
+    @POST
+    @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getJsonAuth() {
-        
-        return authPaciente.getJson();
-    }
-    
-    @GET
-    @Path("/citas")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getJsonCitas() {
-        
-        return citas.getJson();
-    }
-    
-    @GET
-    @Path("/expedientes")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getJsonExpedientes() {
-        
-        return expedientes.getJson();
-    }
-    
-
-    /**
-     * PUT method for updating or creating an instance of PacienteResource
-     * @param content representation for the resource
-     */
-    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public void putJson(String content) {
+    public String postLogin(String json) {
+        
+        return authPaciente.postLogin(json);
+    }
+    
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getPacienteResource() {
+        return "ejecutando";
+    }
+    
+    @POST
+    @Path("/actualizarSolicitud")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String postActualizarSolicitud(String json) {
+        citas.postActualizarSolicitud(json);
+        return json;
     }
 }

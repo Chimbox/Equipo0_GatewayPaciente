@@ -5,8 +5,12 @@
  */
 package restService;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
 /**
@@ -25,10 +29,15 @@ public class ExpedienteClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8084/Equipo0_CatalogoExpediente/res";
+    private static final String BASE_URI = "https://localhost:8443/Equipo0_CatalogoExpediente/res";
 
     public ExpedienteClient() {
-        client = javax.ws.rs.client.ClientBuilder.newClient();
+        client = ClientBuilder.newBuilder().sslContext(getSSLContext()).hostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String paramString, SSLSession paramSSLSession) {
+                return true;
+            }
+        }).build();
         webTarget = client.target(BASE_URI).path("exp");
     }
 
@@ -44,5 +53,31 @@ public class ExpedienteClient {
     public void close() {
         client.close();
     }
-    
+
+    private SSLContext getSSLContext() {
+        // for alternative implementation checkout org.glassfish.jersey.SslConfigurator
+        javax.net.ssl.TrustManager x509 = new javax.net.ssl.X509TrustManager() {
+            @Override
+            public void checkClientTrusted(java.security.cert.X509Certificate[] arg0, String arg1) throws java.security.cert.CertificateException {
+                return;
+            }
+
+            @Override
+            public void checkServerTrusted(java.security.cert.X509Certificate[] arg0, String arg1) throws java.security.cert.CertificateException {
+                return;
+            }
+
+            @Override
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+        SSLContext ctx = null;
+        try {
+            ctx = SSLContext.getInstance("SSL");
+            ctx.init(null, new javax.net.ssl.TrustManager[]{x509}, null);
+        } catch (java.security.GeneralSecurityException ex) {
+        }
+        return ctx;
+    }
 }
